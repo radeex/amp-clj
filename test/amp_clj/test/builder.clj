@@ -20,12 +20,9 @@
 
 
 (defn bytemap
-  "Convert a conveniently-defined map of strings to strings to a map of
-  bytes to bytes."
+  "Encode {string string} to {bytes bytes}."
   [strings]
-  (apply array-map
-    (flatten 
-      (for [[key value] strings] [(e8 key) (e8 value)]))))
+  (into {} (for [[k v] strings] [(e8 k) (e8 v)])))
 
 
 (deftest prefixing
