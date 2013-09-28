@@ -19,7 +19,16 @@
   (= realbytes (map int pseudobytes)))
 
 
-(deftest building
+(defn bytemap
+  "Convert a conveniently-defined map of strings to strings to a map of
+  bytes to bytes."
+  [strings]
+  (apply array-map
+    (flatten 
+      (for [[key value] strings] [(e8 key) (e8 value)]))))
+
+
+(deftest prefixing
   (is (compbytes
     (length-prefix (e8 "foo"))
     [0 3 \f \o \o])
@@ -28,5 +37,16 @@
   (is 
     (thrown? AssertionError
              (length-prefix (e8 (apply str (repeat 65536 "x")))))
-    "length-prefix only works on sequences whose lengths fit in two bytes.")
-  )
+    "length-prefix only works on sequences whose lengths fit in two bytes."))
+
+
+(deftest boxes
+  (is (compbytes
+    (build-box (bytemap {"foo" "bar"}))
+    [0 3 \f \o \o 0 3 \b \a \r 0 0])
+    "Single key/value pair followed by NUL NUL delimiter.")
+
+  (is (compbytes
+    (build-box (bytemap {"foo" "bar" "baz" "quux"}))
+    [0 3 \f \o \o 0 3 \b \a \r 0 3 \b \a \z 0 4 \q \u \u \x 0 0])
+    "Two key/value pairs, followed by NUL NUL delimiter."))
