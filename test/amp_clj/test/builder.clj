@@ -50,3 +50,13 @@
     (build-box (bytemap {"foo" "bar" "baz" "quux"}))
     [0 3 \f \o \o 0 3 \b \a \r 0 3 \b \a \z 0 4 \q \u \u \x 0 0])
     "Two key/value pairs, followed by NUL NUL delimiter."))
+
+
+(deftest commands
+  (is (=
+    (build-command "mycmd" "abc" {"a" "b" "c" "d"})
+    {
+      "_command" "mycmd"
+      "_ask" "abc"
+      "a" "b"
+      "c" "d"})))

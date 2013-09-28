@@ -1,5 +1,5 @@
 (defproject amp-clj "1.0.0-SNAPSHOT"
-  :description "FIXME: write description"
+  :description "An implementation of AMP in Clojure."
   :license "MIT"
   :url "http://github.com/radeex/amp-clj"
   :dependencies [
@@ -7,4 +7,3 @@
     ; [org.clojure/math.numeric-tower "0.0.2"]
     [clj-struct "0.1.0"]]
   :plugins [[codox "0.6.6"]])
-

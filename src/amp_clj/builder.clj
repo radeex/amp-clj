@@ -1,4 +1,5 @@
 (ns amp-clj.builder
+  "Functions for building AMP messages."
   (:require [clj-struct.core :as struct]))
 
 
@@ -26,3 +27,13 @@
       (concat (length-prefix k)
               (length-prefix v))))
     (struct/pack "!H" 0)))
+
+
+
+(defn build-command
+  [command id args]
+  (conj args {"_command" command "_ask" id}))
+
+; TODO:
+; - (build-command "command-name" id args) -> bytes
+; - 
