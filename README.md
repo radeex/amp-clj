@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/radeex/amp-clj.png)](https://travis-ci.org/radeex/amp-clj)
+
 # amp-clj
 
 An AMP implementation in Clojure.
