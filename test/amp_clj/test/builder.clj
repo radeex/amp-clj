@@ -13,7 +13,7 @@
 
 (defn compbytes
   "Compare two sequences of integers.
-  
+
   Characters in 'pseudobytes' are converted to integers."
   [realbytes pseudobytes]
   (= realbytes (map int pseudobytes)))
@@ -34,7 +34,7 @@
     [0 3 \f \o \o])
   "basic length-prefixing of a small string.")
 
-  (is 
+  (is
     (thrown? AssertionError
              (length-prefix (e8 (apply str (repeat 65536 "x")))))
     "length-prefix only works on sequences whose lengths fit in two bytes."))
