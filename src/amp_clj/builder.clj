@@ -33,7 +33,3 @@
 (defn build-command
   [command id args]
   (conj args {"_command" command "_ask" id}))
-
-; TODO:
-; - (build-command "command-name" id args) -> bytes
-; - 
