@@ -1,13 +1,12 @@
-(ns amp-clj.test.junk)
+(ns amp-clj.test.junk
+  (:require [gloss.core :as gloss])
+  (:require [gloss.io :as io])
+  (:import java.nio.ByteBuffer)
+)
 
-(defn e8 "Encode a string to bytes with utf-8."
-  [string] (.getBytes string "UTF-8"))
-
-(def e8v (comp vec e8))
-
-
-(defn d8 "Decode a bytes to a string with utf-8."
-  [bytes] (String. (byte-array bytes) "UTF-8"))
+(defn e8v
+  "Encode a string to a vector of bytes with utf-8."
+  [string] (vec (.getBytes string "UTF-8")))
 
 
 (defn compbytes
@@ -18,15 +17,38 @@
   (= realbytes (map int pseudobytes)))
 
 
-(defn bytemap
-  "Encode {string string} to {bytes bytes}."
-  [strings]
-  (into {} (for [[k v] strings] [(e8 k) (e8 v)])))
+; (defn bytemap
+;   "Encode {string string} to {bytes bytes}."
+;   [strings]
+;   (into {} (for [[k v] strings] [(e8 k) (e8 v)])))
 
 
 (defn get-bytes-from-bytebuf
+  "Return a vector of bytes from a ByteBuffer."
   [bytebuf]
   (let [len (.remaining bytebuf)
         bytes (byte-array len)]
     (.get bytebuf bytes 0 len)
     (vec bytes)))
+
+(defn encode
+  "Encode the given input with the given codec, and return a byte vector."
+  [codec input]
+  (get-bytes-from-bytebuf (io/contiguous (io/encode (gloss/compile-frame codec) input)))
+  )
+
+(defn bytebuf-from-bytes
+  "Turn a sequence of byte-able values into a ByteBuffer.
+
+  The ByteBuffer's position will be reset to 0 before returning."
+  [bytes]
+  ; Man. Is this really the easiest way to populate a ByteBuffer?
+  (let [bb (ByteBuffer/allocate (count bytes))]
+    (doseq [byte bytes]
+      (.put bb (.byteValue (int byte))))
+    (.position bb 0)))
+
+(defn decode
+  "Decode the given bytes with the given codec. Returns the parsed structure."
+  [codec bytes]
+    (io/decode (gloss/compile-frame codec) (bytebuf-from-bytes bytes)))
