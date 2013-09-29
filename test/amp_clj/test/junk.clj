@@ -1,54 +1,28 @@
 (ns amp-clj.test.junk
-  (:require [gloss.core :as gloss])
-  (:require [gloss.io :as io])
-  (:import java.nio.ByteBuffer)
-)
+  (:use clojure.test)
+  (:use [amp-clj.junk]))
 
-(defn e8v
-  "Encode a string to a vector of bytes with utf-8."
-  [string] (vec (.getBytes string "UTF-8")))
+(deftest e8v-tests
 
+  (is (=
+    (e8v "foo")
+    (map int "foo")))
 
-(defn compbytes
-  "Compare two sequences of integers.
-
-  Characters in 'pseudobytes' are converted to integers."
-  [realbytes pseudobytes]
-  (= realbytes (map int pseudobytes)))
+  (is (=
+    (e8v (map int "foo"))
+    (map int "foo"))))
 
 
-; (defn bytemap
-;   "Encode {string string} to {bytes bytes}."
-;   [strings]
-;   (into {} (for [[k v] strings] [(e8 k) (e8 v)])))
+(deftest bytemap-tests
 
+  (is (= (bytemap {"foo" "bar"})
+         {(e8v "foo") (e8v "bar")})
+   "Converts {string string} to {bytes bytes}")
 
-(defn get-bytes-from-bytebuf
-  "Return a vector of bytes from a ByteBuffer."
-  [bytebuf]
-  (let [len (.remaining bytebuf)
-        bytes (byte-array len)]
-    (.get bytebuf bytes 0 len)
-    (vec bytes)))
+  (is (= (bytemap {"foo" (e8v "bar")})
+         {(e8v "foo") (e8v "bar")})
+   "Converts {string bytes} to {bytes bytes}")
 
-(defn encode
-  "Encode the given input with the given codec, and return a byte vector."
-  [codec input]
-  (get-bytes-from-bytebuf (io/contiguous (io/encode (gloss/compile-frame codec) input)))
-  )
-
-(defn bytebuf-from-bytes
-  "Turn a sequence of byte-able values into a ByteBuffer.
-
-  The ByteBuffer's position will be reset to 0 before returning."
-  [bytes]
-  ; Man. Is this really the easiest way to populate a ByteBuffer?
-  (let [bb (ByteBuffer/allocate (count bytes))]
-    (doseq [byte bytes]
-      (.put bb (.byteValue (int byte))))
-    (.position bb 0)))
-
-(defn decode
-  "Decode the given bytes with the given codec. Returns the parsed structure."
-  [codec bytes]
-    (io/decode (gloss/compile-frame codec) (bytebuf-from-bytes bytes)))
+  (is (= (bytemap {(e8v "foo") "bar"})
+         {(e8v "foo") (e8v "bar")})
+   "Converts {bytes string} to {bytes bytes}"))

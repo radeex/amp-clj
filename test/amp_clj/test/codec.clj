@@ -1,5 +1,5 @@
 (ns amp-clj.test.codec
-  (:use amp-clj.test.junk)
+  (:use amp-clj.junk)
   (:use amp-clj.codec)
   (:use clojure.test)
 )
