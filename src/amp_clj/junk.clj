@@ -60,3 +60,9 @@
   "Decode the given bytes with the given codec. Returns the parsed structure."
   [codec bytes]
     (io/decode (gloss/compile-frame codec) (bytebuf-from-bytes bytes)))
+
+
+(defn readable
+  [bytes]
+  (println bytes)
+  (map #(if (and (> % 32) (< % 126)) (str (char %)) %) bytes))
