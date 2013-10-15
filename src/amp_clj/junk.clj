@@ -13,6 +13,10 @@
     (vec (.getBytes string "UTF-8"))
     string))
 
+(defn d8v
+  "Decode a vector of bytes (optionally as integers) to a String with UTF-8"
+  [bytes]
+  (String. (byte-array (map byte bytes)) "UTF-8"))
 
 (defn compbytes
   "Compare two sequences of integers.
